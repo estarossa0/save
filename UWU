@@ -1,0 +1,56 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+typedef struct liste
+{
+  int nombre;
+  struct liste *suivant;
+} liste;
+
+void alocation (liste **ptr)
+{
+    if (*ptr == NULL)
+    {
+        *ptr = (liste *)malloc(sizeof(liste));
+        (*ptr)->suivant = NULL;
+    }
+    else
+    {
+        while((*ptr)->suivant != NULL)
+            (*ptr) = (*ptr)->suivant;
+        (*ptr)->suivant = (liste *)malloc(sizeof(liste));
+        (*ptr) = (*ptr)->suivant;
+        (*ptr)->suivant = NULL;
+    }
+}
+
+int main ()
+{
+    liste   *ptr;
+    liste   *sv;
+    liste   *tete;
+    int     t;
+    int     i;
+
+    printf("entre nombre des elements\n");
+    scanf("%d", &t);
+    ptr = NULL;
+    for (i = 0; i < t; i++)
+    {
+        alocation(&ptr);
+        if (i == 0)
+            tete = ptr;
+        printf("entrer l'entrier: ");
+        scanf("%d", &(ptr->nombre));
+    }
+    ptr = tete;
+    while(ptr != NULL)
+    {
+        printf("%d ", ptr->nombre);
+        ptr = ptr->suivant;
+    }
+    printf("\n");
+  return 0;
+}
