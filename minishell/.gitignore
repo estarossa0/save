@@ -1,0 +1,6 @@
+.vscode/
+.history/
+*.o
+objects/
+minishell
+*.a
