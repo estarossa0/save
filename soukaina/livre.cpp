@@ -68,7 +68,7 @@ void	update_f_livre()
 void	modifier_livre()
 {
 	std::string line;
-	std::cout << "ISBN de live :";
+	std::cout << "ISBN de livre :";
 	std::getline(std::cin, line);
 	for (auto & livre : livres)
 	{

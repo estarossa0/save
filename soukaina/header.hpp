@@ -34,7 +34,7 @@ class s_commande
 		std::string IDCM;
 		std::string IDCCM;
 		std::string date;
-		std::string prix;
+		std::string total;
 };
 
 extern std::vector<s_livre>	livres;

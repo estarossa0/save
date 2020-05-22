@@ -9,7 +9,7 @@ void	afficher_commande()
 		cout << "IDC: "  + commande.IDCM << endl;
 		cout << "IDCCM: " + commande.IDCCM << endl;
 		cout << "Date: " + commande.date << endl;
-		cout << "Prix: " << commande.prix << endl;
+		cout << "total: " << commande.total << endl;
 		cout << "--------------" << endl;
 	}
 }
@@ -28,27 +28,27 @@ void	ajouter_commande()
 	cout << "Date: ";
 	getline(cin, line);
 	commande.date = line;
-	cout << "Prix: ";
+	cout << "total: ";
 	getline(cin, line);
-	commande.prix = line;
+	commande.total = line;
 	commandes.push_back(commande);
 	f_commande << "IDC: "  + commande.IDCM << endl;
 	f_commande << "IDCCM: " + commande.IDCCM << endl;
 	f_commande << "Date: " + commande.date << endl;
-	f_commande << "Prix: " << commande.prix << endl;
+	f_commande << "total: " << commande.total << endl;
 	f_commande << "--------------" << endl;
 }
 
 void	update_f_commande()
 {
-	f_client.close();
-	f_client.open("liste_commandes.poc" , fstream::out | std::ofstream::trunc);
+	f_commande.close();
+	f_commande.open("liste_commandes.poc" , fstream::out | std::ofstream::trunc);
 	for (s_commande commande : commandes)
 	{
 		f_commande << "IDC: "  + commande.IDCM << endl;
 		f_commande << "IDCCM: " + commande.IDCCM << endl;
 		f_commande << "Date: " + commande.date << endl;
-		f_commande << "Prix: " << commande.prix << endl;
+		f_commande << "total: " << commande.total << endl;
 		f_commande << "--------------" << endl;
 	}
 }
@@ -87,7 +87,7 @@ void	rechercher_commande()
 			cout << "IDCM: "  + commande.IDCM << endl;
 			cout << "IDCCM: " + commande.IDCCM << endl;
 			cout << "Adresse: " + commande.date << endl;
-			cout << "Prix total: " << commande.prix << endl;
+			cout << "total: " << commande.total << endl;
 			return ;
 		}
 	}
@@ -108,7 +108,7 @@ void	modifier_commande()
         std::cout << "1. IDCM" << endl;
         std::cout << "2. IDCCM" << endl;
         std::cout << "3. Date" << endl;
-        std::cout << "4. Prix total" << endl;
+        std::cout << "4. total total" << endl;
         std::cout << "Quelle caractéristique souhaitez vous changer: ";
 				std::getline(std::cin, line);
 				choice = std::stoi(line);
@@ -137,7 +137,7 @@ void	modifier_commande()
           }
           case 4:
           {
-            commande.prix = stoi(line);
+            commande.total = stoi(line);
 			update_f_commande();
             return ;
           }
