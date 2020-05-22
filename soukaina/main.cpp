@@ -11,9 +11,9 @@ int main()
 {
 
 	string line;
-	f_livre.open("liste_livres.poc", std::ofstream::trunc);
-	f_client.open("liste_clients.poc", std::ofstream::trunc);
-	f_commande.open("liste_commandes.poc", std::ofstream::trunc);
+	f_livre.open("liste_livres.poc", fstream::out | std::ofstream::trunc);
+	f_client.open("liste_clients.poc", fstream::out |  std::ofstream::trunc);
+	f_commande.open("liste_commandes.poc", fstream::out |  std::ofstream::trunc);
 	while (1)
 	{
 		cout << "1.Gestion des livres.\n2.Gestion des clients.\n3.Gestion des commandes.\n4.Quitter.\n";

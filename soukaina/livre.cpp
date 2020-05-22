@@ -8,9 +8,11 @@ void	afficher_livre()
 	{
 		cout << "ISBN: "  + livre.ISBN << endl;
 		cout << "titre: " + livre.titre << endl;
-		cout << "Auteur: " + livre.Editeur << endl;
+		cout << "Auteur: " + livre.auteur << endl;
+		cout << "Editeur: " + livre.editeur << endl;
 		cout << "annee: " << livre.annee << endl;
 		cout << "prix: " << livre.prix << endl;
+		cout << "--------------" << endl;
 	}
 }
 
@@ -27,32 +29,39 @@ void	ajouter_livre()
 	livre.titre = line;
 	cout << "Auteur: ";
 	std::getline(std::cin, line);
-	livre.Auteur = line;
-	cout << "annee :" ;
+	livre.auteur = line;
+	cout << "Editeur: ";
 	std::getline(std::cin, line);
-	livre.annee = std::stoi(line);
-	cout << "prix :" ;
+	livre.editeur = line;
+	cout << "Annee: " ;
 	std::getline(std::cin, line);
-	livre.prix = std::stoi(line);
+	livre.annee = line;
+	cout << "prix: " ;
+	std::getline(std::cin, line);
+	livre.prix = line;
 	livres.push_back(livre);
 	f_livre << "ISBN: "  + livre.ISBN << endl;
 	f_livre << "titre: " + livre.titre << endl;
-	f_livre << "Auteur: " + livre.Editeur << endl;
+	f_livre << "Auteur: " + livre.auteur << endl;
+	f_livre << "Editeur: " + livre.editeur << endl;
 	f_livre << "annee: " << livre.annee << endl;
-	f_livre << "prix: " << livre.prix << endl << endl;
+	f_livre << "prix: " << livre.prix << endl;
+	f_livre << "--------------" << endl;
 }
 
 void	update_f_livre()
 {
 	f_livre.close();
-	f_livre.open("liste_livres.poc" , std::ofstream::trunc);
+	f_livre.open("liste_livres.poc" , fstream::out | std::ofstream::trunc);
 	for (s_livre livre : livres)
 	{
 		f_livre << "ISBN: "  + livre.ISBN << endl;
 		f_livre << "titre: " + livre.titre << endl;
-		f_livre << "Auteur: " + livre.Editeur << endl;
+		f_livre << "Auteur: " + livre.auteur << endl;
+		f_livre << "Auteur: " + livre.editeur << endl;
 		f_livre << "annee: " << livre.annee << endl;
-		f_livre << "prix: " << livre.prix << endl << endl;
+		f_livre << "prix: " << livre.prix << endl;
+		f_livre << "--------------" << endl;
 	}
 }
 
@@ -61,19 +70,21 @@ void	modifier_livre()
 	std::string line;
 	std::cout << "ISBN de live :";
 	std::getline(std::cin, line);
-	for (s_livre livre : livres)
+	for (auto & livre : livres)
 	{
 		int choice;
 		if (livre.ISBN == line)
 		{
 			do {
-				std::cout << "Quelle caractéristique souhaitez vous changer: ";
 				std::cout << "1. ISBN" << endl;
 				std::cout << "2. titre" << endl;
 				std::cout << "3. Auteur" << endl;
-				std::cout << "4. annee" << endl;
-				std::cout << "5. prix" << endl;
-				std::stoi(line);
+				std::cout << "4. Editeur" << endl;
+				std::cout << "5. annee" << endl;
+				std::cout << "6. prix" << endl;
+				std::cout << "Quelle caractéristique souhaitez vous changer: ";
+				std::getline(std::cin, line);
+				choice = std::stoi(line);
 				if (choice >= 1 && choice <= 5) {
 					std::cout << "Nouvelle valeur: ";
 					std::getline(std::cin, line);
@@ -93,19 +104,25 @@ void	modifier_livre()
 					}
 					case 3:
 					{
-						livre.Auteur = line;
+						livre.auteur = line;
 						update_f_livre();
 						return ;
 					}
 					case 4:
 					{
-						livre.annee = std::stoi(line);
+						livre.editeur = line;
 						update_f_livre();
 						return ;
 					}
 					case 5:
 					{
-						livre.prix = std::stoi(line);
+						livre.annee = line;
+						update_f_livre();
+						return ;
+					}
+					case 6:
+					{
+						livre.prix = line;
 						update_f_livre();
 						return ;
 					}
@@ -114,7 +131,7 @@ void	modifier_livre()
 			} while (choice >= 1 && choice <= 5);
 		}
 	}
-	std::cout << "not found\n";
+	std::cout << "Non trouvé\n";
 }
 
 void	supprimer_livre()
@@ -131,11 +148,12 @@ void	supprimer_livre()
 		if (livre.ISBN == line)
 		{
 			livres.erase(livres.begin() + index);
+			update_f_livre();
 			return;
 		}
 		index++;
 	}
-	std::cout << "not found\n";
+	std::cout << "Non trouvé\n";
 }
 
 void	rechercher_livre()
@@ -150,12 +168,14 @@ void	rechercher_livre()
 		{
 			cout << "ISBN: "  + livre.ISBN << endl;
 			cout << "titre: " + livre.titre << endl;
-			cout << "Auteur: " + livre.Editeur << endl;
+			cout << "Auteur: " + livre.auteur << endl;
+			cout << "Editeur: " + livre.editeur << endl;
 			cout << "annee: " << livre.annee << endl;
 			cout << "prix: " << livre.prix << endl;
+			return ;
 		}
 	}
-	std::cout << "not found\n";
+	std::cout << "Non trouvé\n";
 }
 
 void	gestion_livre()

@@ -12,10 +12,10 @@ class	s_livre
 	public:
 		std::string	ISBN;
 		std::string	titre;
-		std::string Auteur;
-		std::string Editeur;
-		int			annee;
-		int			prix;
+		std::string auteur;
+		std::string editeur;
+		std::string annee;
+		std::string prix;
 };
 
 class	s_client
@@ -34,7 +34,7 @@ class s_commande
 		std::string IDCM;
 		std::string IDCCM;
 		std::string date;
-		int prix;
+		std::string prix;
 };
 
 extern std::vector<s_livre>	livres;

@@ -11,6 +11,7 @@ void	afficher_client()
 		cout << "Adresse: " + client.adresse << endl;
 		cout << "Tel: " << client.tel << endl;
 		cout << "Anciente: " << client.anciente << endl;
+		cout << "--------------" << endl;
 	}
 }
 
@@ -40,7 +41,22 @@ void	ajouter_client()
 	f_client << "Adresse: " + client.adresse << endl;
 	f_client << "Tel: " << client.tel << endl;
 	f_client << "Anciente: " << client.anciente << endl;
+	f_client << "--------------" << endl;
+}
 
+void	update_f_client()
+{
+	f_client.close();
+	f_client.open("liste_clients.poc" , fstream::out | std::ofstream::trunc);
+	for (s_client client : clients)
+	{
+		f_client << "IDC: "  + client.IDC << endl;
+		f_client << "Nom: " + client.nom << endl;
+		f_client << "Adresse: " + client.adresse << endl;
+		f_client << "Tel: " << client.tel << endl;
+		f_client << "Anciente: " << client.anciente << endl;
+		f_client << "--------------" << endl;
+	}
 }
 
 void	supprimer_client()
@@ -56,6 +72,7 @@ void	supprimer_client()
 		if (client.IDC == line)
 		{
 			clients.erase(clients.begin() + index);
+			update_f_client();
 			return ;
 		}
 		index++;
@@ -78,23 +95,10 @@ void	rechercher_client()
 			cout << "Adresse: " + client.adresse << endl;
 			cout << "Tel: " << client.tel << endl;
 			cout << "Anciente: " << client.anciente << endl;
+			return ;
 		}
 	}
 	std::cout << "not found\n";
-}
-
-void	update_f_client()
-{
-	f_client.close();
-	f_client.open("liste_clients.poc" , std::ofstream::trunc);
-	for (s_client client : clients)
-	{
-		f_client << "IDC: "  + client.IDC << endl;
-		f_client << "Nom: " + client.nom << endl;
-		f_client << "Adresse: " + client.adresse << endl;
-		f_client << "Tel: " << client.tel << endl;
-		f_client << "Anciente: " << client.anciente << endl;
-	}
 }
 
 void	modifier_client()
@@ -102,19 +106,20 @@ void	modifier_client()
 	std::string line;
 	std::cout << "IDC du client:";
 	std::getline(std::cin, line);
-	for (s_client client : clients)
+	for (auto & client : clients)
 	{
     int choice;
 		if (client.IDC == line)
 		{
       do {
-        std::cout << "Quelle caractéristique souhaitez vous changer: ";
         std::cout << "1. IDC" << endl;
         std::cout << "2. Nom" << endl;
         std::cout << "3. Adresse" << endl;
         std::cout << "4. Tel" << endl;
         std::cout << "5. Anciente" << endl;
-        choice = std::stoi(line);
+        std::cout << "Quelle caractéristique souhaitez vous changer: ";
+				std::getline(std::cin, line);
+				choice = std::stoi(line);
         if (choice >= 1 && choice <= 6) {
           std::cout << "Nouvelle valeur: ";
           std::getline(std::cin, line);
@@ -123,31 +128,31 @@ void	modifier_client()
           case 1:
           {
             client.IDC = line;
-			update_f_client();
+						update_f_client();
             return ;
           }
           case 2:
           {
             client.nom = line;
-			update_f_client();
+						update_f_client();
             return ;
           }
           case 3:
           {
             client.adresse = line;
-			update_f_client();
+						update_f_client();
             return ;
           }
           case 4:
           {
             client.tel = line;
-			update_f_client();
+						update_f_client();
             return ;
           }
           case 5:
           {
             client.anciente = line;
-			update_f_client();
+						update_f_client();
             return ;
           }
           default: std::cout << "Choix invalide" << endl;
@@ -163,7 +168,7 @@ void	gestion_client()
 	string line;
 	while (1)
 	{
-		cout << "1.Afficher la liste des clients.\n2.Ajouter un clients.\n3.Supprimer un clients.\n4.Modifier un clients.\n5.Rechercher un clients.\n6.Revenir au menu précédent.\n";
+		cout << "1.Afficher la liste des clients.\n2.Ajouter un client.\n3.Supprimer un client.\n4.Modifier un client.\n5.Rechercher un client.\n6.Revenir au menu précédent.\n";
 		getline(cin, line);
 		if (line == "1")
 			afficher_client();

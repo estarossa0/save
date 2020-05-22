@@ -10,6 +10,7 @@ void	afficher_commande()
 		cout << "IDCCM: " + commande.IDCCM << endl;
 		cout << "Date: " + commande.date << endl;
 		cout << "Prix: " << commande.prix << endl;
+		cout << "--------------" << endl;
 	}
 }
 
@@ -29,12 +30,27 @@ void	ajouter_commande()
 	commande.date = line;
 	cout << "Prix: ";
 	getline(cin, line);
-	commande.prix = std::stoi(line);
+	commande.prix = line;
 	commandes.push_back(commande);
 	f_commande << "IDC: "  + commande.IDCM << endl;
 	f_commande << "IDCCM: " + commande.IDCCM << endl;
 	f_commande << "Date: " + commande.date << endl;
-	f_commande << "Prix: " << commande.prix << endl << endl;
+	f_commande << "Prix: " << commande.prix << endl;
+	f_commande << "--------------" << endl;
+}
+
+void	update_f_commande()
+{
+	f_client.close();
+	f_client.open("liste_commandes.poc" , fstream::out | std::ofstream::trunc);
+	for (s_commande commande : commandes)
+	{
+		f_commande << "IDC: "  + commande.IDCM << endl;
+		f_commande << "IDCCM: " + commande.IDCCM << endl;
+		f_commande << "Date: " + commande.date << endl;
+		f_commande << "Prix: " << commande.prix << endl;
+		f_commande << "--------------" << endl;
+	}
 }
 
 void	supprimer_commande()
@@ -50,6 +66,7 @@ void	supprimer_commande()
 		if (commande.IDCM == line)
 		{
 			commandes.erase(commandes.begin() + index);
+			update_f_commande();
 			return ;
 		}
 		index++;
@@ -71,22 +88,10 @@ void	rechercher_commande()
 			cout << "IDCCM: " + commande.IDCCM << endl;
 			cout << "Adresse: " + commande.date << endl;
 			cout << "Prix total: " << commande.prix << endl;
+			return ;
 		}
 	}
-	std::cout << "not found\n";
-}
-
-void	update_f_commande()
-{
-	f_client.close();
-	f_client.open("liste_clients.poc" , std::ofstream::trunc);
-	for (s_commande commande : commandes)
-	{
-		f_commande << "IDC: "  + commande.IDCM << endl;
-		f_commande << "IDCCM: " + commande.IDCCM << endl;
-		f_commande << "Date: " + commande.date << endl;
-		f_commande << "Prix: " << commande.prix << endl << endl;
-	}
+	std::cout << "Non trouvé\n";
 }
 
 void	modifier_commande()
@@ -94,18 +99,19 @@ void	modifier_commande()
 	std::string line;
 	std::cout << "IDCM du commande:";
 	std::getline(std::cin, line);
-	for (s_commande commande : commandes)
+	for (auto & commande : commandes)
 	{
     int choice;
 		if (commande.IDCM == line)
 		{
       do {
-        std::cout << "Quelle caractéristique souhaitez vous changer: ";
         std::cout << "1. IDCM" << endl;
         std::cout << "2. IDCCM" << endl;
         std::cout << "3. Date" << endl;
         std::cout << "4. Prix total" << endl;
-        choice = std::stoi(line);
+        std::cout << "Quelle caractéristique souhaitez vous changer: ";
+				std::getline(std::cin, line);
+				choice = std::stoi(line);
         if (choice >= 1 && choice <= 4) {
           std::cout << "Nouvelle valeur: ";
           std::getline(std::cin, line);
@@ -140,7 +146,7 @@ void	modifier_commande()
       } while (choice >= 1 && choice <= 4);
 		}
 	}
-	std::cout << "not found\n";
+	std::cout << "Non trouvé\n";
 }
 
 void 	gestion_commande()
@@ -148,7 +154,7 @@ void 	gestion_commande()
 	std::string line;
 	while (1)
 	{
-		std::cout << "1.Afficher la liste des commandes.\n2.Ajouter un commandes.\n3.Supprimer un commandes.\n4.Modifier un commandes.\n5.Rechercher un commandes.\n6.Revenir au menu précédent.\n";
+		std::cout << "1.Afficher la liste des commandes.\n2.Ajouter une commande.\n3.Supprimer une commande.\n4.Modifier une commande.\n5.Rechercher une commande.\n6.Revenir au menu précédent.\n";
 		std::getline(std::cin, line);
 		if (line == "1")
 			afficher_commande();
