@@ -2,7 +2,6 @@
     "editor.tabSize": 4,
     "editor.insertSpaces": false,
     "editor.renderWhitespace": "all",
-    "files.trimTrailingWhitespace": true,
     "files.insertFinalNewline": true,
     "workbench.iconTheme": "ayu",
     "workbench.colorTheme": "Ayu Dark",
@@ -32,7 +31,10 @@
         "menu.selectionForeground": "#C6FF00",
         "menubar.selectionForeground": "#C6FF00",
         "editor.findMatchBorder": "#C6FF00",
-        "selection.background": "#C6FF0040"
+        "selection.background": "#C6FF0040",
+        "list.hoverBackground": "#043d20",
+        "list.focusForeground": "#9fd4f3",
+        "list.hoverForeground": "#9fd4f3"
     },
     "materialTheme.accent": "Acid Lime",
     "C_Cpp.updateChannel": "Insiders"
