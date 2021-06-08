@@ -9,5 +9,8 @@
 		"sideBar.border": "#312219"
 	},
 	"C_Cpp.intelliSenseCacheSize": 70,
-	"C_Cpp.updateChannel": "Insiders"
+	"C_Cpp.updateChannel": "Insiders",
+	"files.exclude": {
+		"**/.history": true
+	}
 }
