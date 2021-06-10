@@ -2,7 +2,6 @@
 	"editor.tabSize": 4,
 	"editor.insertSpaces": false,
 	"editor.renderWhitespace": "all",
-	"files.insertFinalNewline": true,
 	"workbench.colorTheme": "Bear Theme",
 	"files.autoSave": "onFocusChange",
 	"workbench.colorCustomizations": {
@@ -10,6 +9,11 @@
 	},
 	"C_Cpp.intelliSenseCacheSize": 70,
 	"C_Cpp.updateChannel": "Insiders",
+	"files.trimTrailingWhitespace": true,
+	"local-history.daysLimit": 100,
+	"local-history.saveDelay": 60,
+	"terminal.integrated.tabs.enabled": true,
+	"local-history.treeLocation": "localHistory",
 	"files.exclude": {
 		"**/.history": true
 	}

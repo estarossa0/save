@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if [[ $# -eq 0 ]]; then
+	echo "usage: delete file"
+    echo 
+
+else
+	ls -G $1
+	read -p "remove -> $1: " check
+	if [[ $check = "y" ]] ; then
+		rm -rfv $1
+	fi
+fi

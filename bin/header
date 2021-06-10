@@ -1,0 +1,6 @@
+#!/bin/zsh
+file=$(echo $1 | grep -oE "^[^.]+")
+file=$(echo $file | tr a-z A-Z)
+echo  "#ifndef FT_"$file"_H" >> $1
+echo  "# define FT_"$file"_H" >> $1
+echo "#endif" >> $1

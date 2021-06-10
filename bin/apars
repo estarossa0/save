@@ -1,0 +1,5 @@
+#!/bin/bash
+
+
+ns -fmacho64 $1 -o obj
+ld obj
