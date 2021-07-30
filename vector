@@ -1,0 +1,144 @@
+#pragma once
+
+#include <memory>
+#include "iterators"
+namespace ft
+{
+template<typename T>
+class vector
+{
+protected:
+	T*							_data;
+	T*							_begin;
+	T*							_end;
+	T*							_rbegin;
+	T*							_rend;
+	size_t						_size;
+	size_t						_cap;
+	std::allocator<T>			_alloc;
+
+public:
+//members
+	typedef T												value_type;
+	typedef std::allocator<T>								allocator_type;
+	typedef typename allocator_type::reference				reference;
+	typedef typename allocator_type::const_reference		const_reference;
+	typedef typename allocator_type::pointer				pointer;
+	typedef typename allocator_type::const_pointer			const_pointer;
+	typedef typename allocator_type::size_type				size_type;
+	typedef typename allocator_type::difference_type		difference_type;
+	typedef randomAccessIterator<T>							iterator;
+	typedef const randomAccessIterator<T>					const_iterator;
+	typedef reverseIterator<iterator>						reverse_iterator;
+	typedef reverseIterator<const_iterator>					const_reverse_iterator;
+
+//(cons/des)tructors
+	explicit vector();
+	explicit vector(const vector& other);
+	explicit vector(size_type n, const value_type& val = value_type());
+	~vector();
+
+	vector& operator=(const vector& x);
+	void							assign(size_type n, const value_type& u);
+
+	allocator_type get_allocator() const;
+
+//Element access
+	reference						at(size_type n);
+	const_reference					at(size_type n) const;
+	reference						operator[](size_type n);
+	const_reference					operator[](size_type n) const;
+
+	reference						front();
+	const_reference					front() const;
+	reference						back();
+	const_reference					back() const;
+	T*								data();
+	const T*						data() const;
+
+//Iterators
+	iterator						begin();
+	const_iterator					begin() const;
+	iterator						end();
+	const_iterator					end() const;
+
+	reverse_iterator				rbegin();
+	const_reverse_iterator			rbegin() const;
+	reverse_iterator				rend();
+	const_reverse_iterator			rend() const;
+
+//Capacity
+	bool							empty() const;
+	size_type						size() const;
+	size_type						max_size() const;
+	void							reserve(size_type n);
+	size_type						capacity() const;
+
+//Modifiers
+	void							clear();
+
+	iterator						insert(iterator position, const value_type& val);
+	iterator						insert(iterator position, size_type n, const value_type& val);
+
+	iterator						erase(iterator position);
+	iterator						erase(iterator first, iterator last);
+
+	void							push_back(const value_type& x);
+	void							pop_back();
+
+	void							resize(size_type sz, const value_type& c);
+
+	void							swap(vector& other);
+};
+
+template<typename T>
+vector<T>::vector() {
+	this->_size = 0;
+	this->_data = nullptr;
+	this->_begin = nullptr;
+	this->_end = nullptr;
+	this->_rend = nullptr;
+	this->_rbegin = nullptr;
+	this->_cap = 0;
+}
+
+template<typename T>
+vector<T>::vector(size_type n, const value_type& val) {
+	if (n == 0) {
+		new(this) vector;
+		return ;
+	}
+	this->_data = this->_alloc.allocate(n + 2);
+
+	for (size_t i = 0; i < n ; i++)
+		this->_alloc.construct(this->_data + 1 + i, i);
+
+	this->_begin = this->_data + 1;
+	this->_end = this->_data + n + 1;
+	this->_rend = this->_data;
+	this->_rbegin = this->_data + n;
+	this->_size = n;
+	this->_cap = n;
+}
+
+template<typename T>
+vector<T>::~vector() {
+	// this->_alloc.destroy();
+}
+
+template<typename T>
+typename vector<T>::iterator	vector<T>::begin() {
+	vector<T>::iterator		it;
+
+	it._data = this->_begin;
+	return it;
+}
+
+template<typename T>
+typename vector<T>::iterator	vector<T>::end(){
+	vector<T>::iterator		it;
+
+	it._data = this->_end;
+	return it;
+}
+}
