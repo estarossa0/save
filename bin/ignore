@@ -1,4 +1,0 @@
-#!/bin/bash
-
-echo $@ | tr ' ' '\n' >> .gitignore
-(cat .gitignore | grep .gitignore) > /dev/null || echo .gitignore >> .gitignore
