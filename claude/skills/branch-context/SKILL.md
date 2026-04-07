@@ -7,7 +7,7 @@ description: Use when starting work on an existing branch, resuming after a brea
 
 ## Overview
 
-Analyze the diff between the current branch and the default branch to understand what work is in progress. Produces a structured summary of intent, scope, and status.
+Analyze the diff between the current branch and the default branch to understand what has been done. Produces a structured summary of intent, scope, and changes.
 
 ## When to Use
 
@@ -71,8 +71,7 @@ Produce a structured summary with these sections:
 |---------|----------------|
 | **Branch purpose** | One sentence: what is this branch trying to accomplish? |
 | **Key changes** | Bullet list of the major modifications grouped by concern (e.g., "new API endpoint", "database migration", "UI component") |
-| **Files touched** | Categorized list: new files, modified files, deleted files |
-| **Current status** | Is the work complete? In progress? Are there uncommitted changes? |
+| **Files touched** | Categorized list: new files, modified files, deleted files. Note uncommitted changes separately if any. |
 
 ## Output Format
 
@@ -89,10 +88,7 @@ Produce a structured summary with these sections:
 **New:** file1, file2
 **Modified:** file3, file4
 **Deleted:** file5
-
-### Status
-<complete | in-progress | early stage>
-<uncommitted changes note if any>
+**Uncommitted:** file6, file7 (if any)
 ```
 
 ## Tips
