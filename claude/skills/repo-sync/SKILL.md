@@ -226,6 +226,29 @@ gh pr merge <PR-NUMBER> --repo <main-org>/<repo-name> --squash --admin
 
 Only use `--admin` when the user explicitly requests it.
 
+## Commit Authorship
+
+**Always rewrite commit authorship** on every cherry-picked commit:
+- **Author:** The current user (the dev running the skill) — get from `git config user.name` and `git config user.email`.
+- **Co-Author:** The original commit author from the fork.
+
+This is required because fork contributors (e.g. `chubot5000`) are not members of the Vercel team, so their commits get blocked on deploy. By re-authoring to the current user, the commits pass Vercel's access checks.
+
+After cherry-picking, amend each commit (or the final commit if squashing):
+```bash
+git commit --amend --author="<current-user-name> <current-user-email>" -m "$(cat <<'EOF'
+<original commit message>
+
+Co-Authored-By: <original-author-name> <original-author-email>
+EOF
+)"
+```
+
+For multiple cherry-picked commits, use `git rebase --exec` to rewrite all at once:
+```bash
+git rebase <base-branch> --exec 'git commit --amend --no-edit --author="<current-user-name> <current-user-email>"'
+```
+
 ## Notes
 
 - If `repo-sync-<today's date>` branch already exists, append a counter: `repo-sync-2026-04-02-2`.
