@@ -1,6 +1,6 @@
 ---
 name: repo-sync
-description: Use when syncing changes from the secondary GitHub org (permianlabs-internal) to the main orgs (metastreet-labs or usdai-foundation) — pushes the fork's main as a sync branch, opens a PR, triggers a security review, and merges with a merge commit
+description: Use when syncing changes from the secondary GitHub org (permianlabs-internal) to the main orgs (metastreet-labs or usdai-foundation) — re-authors the fork's main to the dev (Vercel blocks non-member authors), pushes it as a sync branch to both repos, opens a PR, triggers a security review, and merges with a merge commit
 disable-model-invocation: false
 ---
 
@@ -19,9 +19,9 @@ Both repos share git history (since 2026-10-16 for `usdai-landing`):
 - **main → fork** is automatic: `.github/workflows/sync-to-fork.yml` merges the main repo's `main` into the fork's `main` on every push. On a conflict it opens a `sync-conflict-<sha>` PR on the fork for a dev to resolve.
 - **fork → main** is this skill: the fork's `main` is pushed to the main repo as a sync branch, reviewed, and merged with a **merge commit**.
 
-**Never squash or rebase a sync PR.** That rewrites the fork's commits and breaks the shared history; the next main → fork run would then conflict on every replay. The main repo's settings allow merge commits only — keep it that way.
+**Never squash a sync PR, and never rebase it on GitHub.** That rewrites the fork's commits on one side only and breaks the shared history; the next main → fork run would then conflict on every replay. Both repos' settings allow merge commits only — keep it that way.
 
-Because of this, there is no cherry-picking, no "already applied" detection, and no re-authoring. Fork commits land on main with their original authors.
+**Authorship:** Vercel blocks any deployment whose commit author is not a member of the Vercel team, and the fork's contributors (e.g. `chubot5000`) are not members. So Step 5 rewrites every fork commit to be authored by the dev running the skill, with the original author as `Co-Authored-By`, and force-pushes that rewritten line back to the fork's `main` as well. Both repos then share the rewritten commits, so the shared-history invariant holds. This is the only place history is rewritten.
 
 ## Workflow
 
@@ -111,23 +111,34 @@ git rev-list --count origin/<main-default-branch>..fork/<fork-default-branch>
 - **If check 1 fails:** the main → fork Action fell behind, or a `sync-conflict-*` PR is open on the fork. Look for that PR (`gh pr list --repo permianlabs-internal/<repo-name> --search "sync-conflict"`) and the latest `sync-to-fork.yml` run on the main repo. Fix that first; do not cherry-pick around it. If the repo has never been re-baselined, see **Legacy repos** below.
 - **If check 2 is 0:** report that there is nothing to sync and stop.
 
-### Step 5: Push the sync branch
+### Step 5: Re-author and push the sync branch
 
-Check for an existing open sync PR first:
+1. Pick the branch name. Check for an existing open sync PR first:
+   ```bash
+   gh pr list --repo <main-org>/<repo-name> --state open --search "head:repo-sync-" --json number,headRefName
+   ```
+   - **Open sync PR exists:** reuse its branch name and skip Step 6; the PR auto-updates.
+   - **No open PR:** `BRANCH="repo-sync-$(date +%Y-%m-%d)"` (append `-2`, `-3` if taken).
 
-```bash
-gh pr list --repo <main-org>/<repo-name> --state open --search "head:repo-sync-" --json number,headRefName
-```
+2. Build the re-authored line on top of main. The rebase linearizes the fork's history and drops any commit whose patch is already on main (e.g. a duplicate left by a contributor's merge-pull after an earlier rewrite):
+   ```bash
+   FORK_SHA=$(git rev-parse fork/<fork-default-branch>)
+   NAME=$(git config user.name); EMAIL=$(git config user.email)
+   git checkout -B "$BRANCH" "$FORK_SHA"
+   git rebase origin/<main-default-branch> \
+     --exec 'A="$(git log -1 --format="%an <%ae>")"; git commit --amend --no-edit --author="'"$NAME <$EMAIL>"'" --trailer "Co-Authored-By: $A"'
+   git log --format='%h %an | %(trailers:key=Co-Authored-By,valueonly)' origin/<main-default-branch>..HEAD
+   ```
+   Every commit must now show the dev as author and the original author in the trailer. If the rebase conflicts, the main → fork Action is behind (Step 4 should have caught it); abort and fix that first.
 
-- **Open sync PR exists:** push fork main onto its branch. This is a fast-forward because fork main only moves forward; the PR auto-updates. Skip Step 6.
-  ```bash
-  git push origin fork/<fork-default-branch>:refs/heads/<existing-branch>
-  ```
-- **No open PR:** push a new dated branch (append `-2`, `-3` if the name is taken):
-  ```bash
-  BRANCH="repo-sync-$(date +%Y-%m-%d)"
-  git push origin fork/<fork-default-branch>:refs/heads/$BRANCH
-  ```
+3. Push the same commits to both repos. The fork push uses a lease on the SHA fetched in step 2, so a contributor pushing in between fails the push instead of losing work:
+   ```bash
+   git push origin "$BRANCH"                              # new PR: plain push; existing PR: add --force-with-lease
+   git push fork "HEAD:refs/heads/<fork-default-branch>" --force-with-lease="<fork-default-branch>:$FORK_SHA"
+   ```
+   If the fork push is rejected, re-fetch `fork/<fork-default-branch>` and repeat from step 2.
+
+After this, fork `main` and the sync branch point at the same commit. Fork contributors whose local clone still has the pre-rewrite commits should `git pull --rebase`; a merge-pull reintroduces the old commits, which the next sync's rebase drops again.
 
 ### Step 6: Open the PR (new sync only)
 
@@ -205,7 +216,7 @@ If the run failed with a conflict, a `sync-conflict-<sha>` PR is waiting on the 
 
 ## Dev fixes on a sync branch
 
-If the dev needs to change something before merging, commit on the sync branch in the main repo and push. The merge commit carries those fixes to main, and the Action then merges them into the fork. Do not rebase or amend fork commits on the branch.
+If the dev needs to change something before merging, commit on top of the sync branch in the main repo and push. The merge commit carries those fixes to main, and the Action then merges them into the fork. Do not rewrite the re-authored commits underneath: the fork already has them.
 
 ## Legacy repos (not yet re-baselined)
 
