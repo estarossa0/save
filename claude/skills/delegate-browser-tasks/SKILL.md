@@ -16,6 +16,12 @@ Playwright responses are large (accessibility snapshots, tab lists, console logs
 
 If the current model is not Fable, ignore this skill and do the work directly.
 
+## What NOT to delegate: UI verification
+
+Never hand UI verification to the subagent. Checking that a UI change looks/behaves right (layout, styling, copy, states, regressions in the app you're building) stays in the main Fable thread — you need to see it yourself to judge it, and a summary from a cheaper model isn't evidence.
+
+Delegate only **dashboard chores**: navigating third-party/admin pages and clicking buttons to create or configure something (webhooks, API keys, settings, records).
+
 ## Rules
 
 - **Never** click through the dashboard yourself on Fable. No `browser_snapshot`, `browser_click`, `browser_fill_form` loops in the main thread.
@@ -53,3 +59,4 @@ Report back (short):
 - "It's just a couple of clicks, I'll do it myself" — snapshots are still large; delegate.
 - Reading a `browser_snapshot` result in the Fable thread after login.
 - Spawning the subagent without concrete values, so it has to come back and ask.
+- Asking the subagent to "check the page looks right" or "verify the UI change" — that's verification; do it yourself.
